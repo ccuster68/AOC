@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace AOC
 {
@@ -32,36 +33,56 @@ namespace AOC
             {
                 var value = tr.ReadLine();
                 var arr = value.Split(',').Select(int.Parse).ToArray();
-                arr[1] = 12;
-                arr[2] = 2;
-                for (var i = 0; i < arr.Length; i += 4)
-                {
-                    var op = arr[i];
-                    if (op == 99)
-                        break;
-                    var idx1 = arr[i + 1];
-                    var idx2 = arr[i + 2];
-                    var idx3 = arr[i + 3];
 
-                    switch (op)
+                var noun = 0;
+                var verb = 0;
+                
+                for (int i = 0; i < 99; i++)
+                {
+                    for (int j = 0; j < 99; j++)
                     {
-                        case 1:
-                            arr[idx3] = arr[idx1] + arr[idx2];
+                        var arrTemp = new int[arr.Length];
+                        Array.Copy(arr, arrTemp,arr.Length);
+
+                        arr[1] = i;
+                        arr[2] = j;
+                        for (var k = 0; k < arr.Length; k += 4)
+                        {
+                            var op = arrTemp[k];
+                            if (op == 99)
+                                break;
+                            var idx1 = arrTemp[k + 1];
+                            var idx2 = arrTemp[k + 2];
+                            var idx3 = arrTemp[k + 3];
+
+                            switch (op)
+                            {
+                                case 1:
+                                    arrTemp[idx3] = arrTemp[idx1] + arrTemp[idx2];
+                                    break;
+                                case 2:
+                                    arrTemp[idx3] = arrTemp[idx1] * arrTemp[idx2];
+                                    break;
+                            }
+
+                        }
+
+                        if (arrTemp[0] > 19690720)
                             break;
-                        case 2:
-                            arr[idx3] = arr[idx1] * arr[idx2];
+                        if (arrTemp[0] == 19690720)
+                        {
+                            noun = i;
+                            verb = j;
+                            break;
+                        }
+
+                        if (arrTemp[0] == 19690720)
                             break;
                     }
-
                 }
 
-                for (int i = 0; i < arr.Length; i++)
-                {
-                    var toWrite= i == arr.Length - 1? $"{arr[i]}": $"{arr[i]},";
-                    Console.Write(toWrite);
-                }
-
-                Console.WriteLine();
+                Console.WriteLine($"noun: {noun}, verb: {verb}");
+                Console.WriteLine($"{100 * noun + verb}");
             }
 
             
