@@ -2,42 +2,43 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 
 namespace AOC
 {
     class Program
     {
-        public static void calculate(int[] puzzleArr)
+        public static int Calculate(int mass)
         {
             var sum = 0;
-            foreach (var i in puzzleArr)
+            do
             {
-                sum += (i / 3) - 2;
-            }
+                mass = (mass / 3) - 2;
+                sum += mass;
 
-            Console.WriteLine(sum);
+            } while (mass > 6);
+
+            return sum;
         }
 
 
         static void Main(string[] args)
         {
+            var testData = "Test01.txt";
             var testBase = @"h:\git\aoc\testfiles";
-            var testData = Path.Combine(testBase, "puzzle01.txt");
-            var numInArr = 100;
             
+            var answer = 0;
 
-            using (TextReader tr = new StreamReader(testData))
+            using (TextReader tr = new StreamReader(Path.Combine(testBase, testData)))
             {
-                var puzzleArr = new int[numInArr];
-                for (int i = 0; i < puzzleArr.Length; i++)
-                {
-                    puzzleArr[i] = int.Parse(tr.ReadLine());
-                }
-
-                calculate(puzzleArr);
+                var value = tr.ReadToEnd();
+                var arr = value.Split('\n').Select(int.Parse).ToArray();
+                
+                
+                Console.WriteLine($"{answer}");
             }
+
+            
 
         }
     }
