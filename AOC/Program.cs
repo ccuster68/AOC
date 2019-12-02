@@ -1,32 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AOC
 {
     class Program
     {
-        public static void calculate(int[] puzzleArr)
+        public static int Calculate(int mass)
         {
             var sum = 0;
-            foreach (var i in puzzleArr)
+            do
             {
-                sum += (i / 3) - 2;
-            }
+                mass = (mass / 3) - 2;
+                sum += mass;
 
-            Console.WriteLine(sum);
+            } while (mass > 6);
+
+            return sum;
         }
 
 
         static void Main(string[] args)
         {
             var testBase = @"h:\git\aoc\testfiles";
-            var testData = Path.Combine(testBase, "puzzle01.txt");
+            var testData = Path.Combine(testBase, "puzzle02.txt");
             var numInArr = 100;
-            
+            var sum = 0;
 
             using (TextReader tr = new StreamReader(testData))
             {
@@ -36,8 +34,14 @@ namespace AOC
                     puzzleArr[i] = int.Parse(tr.ReadLine());
                 }
 
-                calculate(puzzleArr);
+                foreach (var i in puzzleArr)
+                {
+                    sum += Calculate(i);
+                }
+                
             }
+
+            Console.WriteLine(sum);
 
         }
     }
