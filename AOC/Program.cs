@@ -44,9 +44,9 @@ namespace AOC
                         var arrTemp = new int[arr.Length];
                         Array.Copy(arr, arrTemp,arr.Length);
 
-                        arr[1] = i;
-                        arr[2] = j;
-                        for (var k = 0; k < arr.Length; k += 4)
+                        arrTemp[1] = i;
+                        arrTemp[2] = j;
+                        for (var k = 0; k < arrTemp.Length; k += 4)
                         {
                             var op = arrTemp[k];
                             if (op == 99)
