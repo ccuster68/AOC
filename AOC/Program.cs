@@ -23,9 +23,10 @@ namespace AOC
 
         static void Main(string[] args)
         {
-            var testData = @"h:\git\adventofcode\puzzle01.txt";
+            var testBase = @"h:\git\aoc\testfiles";
+            var testData = Path.Combine(testBase, "puzzle01.txt");
             var numInArr = 100;
-            testData = @"h:\git\adventofcode\puzzle01.txt";
+            
 
             using (TextReader tr = new StreamReader(testData))
             {
