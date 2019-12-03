@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -6,12 +7,13 @@ namespace AOC
 {
     class Program
     {
-        public static bool[,] FillArray(string[] wire, (int x, int y) maxXY, int offsetX, int offsetY)
+        public static bool[,] FillArray(string[] wire, (int x, int y) maxXY, int offsetX, int offsetY, Dictionary<string, int> dicDist)
         {
 
             var w = new bool[maxXY.x, maxXY.y];
             var currentX = offsetX;
             var currentY = offsetY;
+            var ttlDist = 0;
 
             foreach (var s in wire)
             {
@@ -24,13 +26,20 @@ namespace AOC
                         for (int x = currentX + 1; x < currentX + 1 + distance; x++)
                         {
                             w[x, currentY] = true;
+                            ttlDist++;
+                            if (!dicDist.ContainsKey($"{x}-{currentY}"))
+                                dicDist.Add($"{x}-{currentY}", ttlDist);
                         }
                         currentX += distance;
+
                         break;
                     case "L":
                         for (int x = currentX - 1; x > currentX - 1 - distance; x--)
                         {
                             w[x, currentY] = true;
+                            ttlDist++;
+                            if (!dicDist.ContainsKey($"{x}-{currentY}"))
+                                dicDist.Add($"{x}-{currentY}", ttlDist);
                         }
                         currentX -= distance;
                         break;
@@ -38,6 +47,9 @@ namespace AOC
                         for (int y = currentY + 1; y < currentY + 1 + distance; y++)
                         {
                             w[currentX, y] = true;
+                            ttlDist++;
+                            if (!dicDist.ContainsKey($"{currentX}-{y}"))
+                                dicDist.Add($"{currentX}-{y}", ttlDist);
                         }
                         currentY += distance;
                         break;
@@ -45,10 +57,15 @@ namespace AOC
                         for (int y = currentY - 1; y > currentY - 1 - distance; y--)
                         {
                             w[currentX, y] = true;
+                            ttlDist++;
+                            if (!dicDist.ContainsKey($"{currentX}-{y}"))
+                                dicDist.Add($"{currentX}-{y}", ttlDist);
                         }
                         currentY -= distance;
                         break;
                 }
+
+
             }
 
             return w;
@@ -93,7 +110,7 @@ namespace AOC
 
         static void Main(string[] args)
         {
-            var testData = "D3P1.txt";
+            var testData = "D3P1O.txt";
             var testBase = @"h:\git\aoc\testfiles";
 
             var answer = 0;
@@ -117,8 +134,10 @@ namespace AOC
                 w2XY.x += offsetX;
                 w2XY.y += offsetY;
 
-                var w1 = FillArray(wire1, w1XY, offsetX, offsetY);
-                var w2 = FillArray(wire2, w2XY, offsetX, offsetY);
+                var w1DicDist = new Dictionary<string, int>();
+                var w2DicDist = new Dictionary<string, int>();
+                var w1 = FillArray(wire1, w1XY, offsetX, offsetY, w1DicDist);
+                var w2 = FillArray(wire2, w2XY, offsetX, offsetY, w2DicDist);
 
 
                 var minDist = int.MaxValue;
@@ -126,10 +145,14 @@ namespace AOC
                 {
                     for (var Y = 0; Y < Math.Min(w1XY.y, w2XY.y); Y++)
                     {
-                        
+
                         if (w1[X, Y] && w2[X, Y])
                         {
-                            minDist = Math.Min(Math.Abs(X - offsetX) + Math.Abs(Y - offsetY), minDist);
+                            var w1Dist = int.MaxValue;
+                            var w2Dist = int.MaxValue;
+                            w1DicDist.TryGetValue($"{X}-{Y}", out w1Dist);
+                            w2DicDist.TryGetValue($"{X}-{Y}", out w2Dist);
+                            minDist = Math.Min(w1Dist + w2Dist, minDist);
                         }
                     }
                 }
