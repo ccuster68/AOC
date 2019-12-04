@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace AOC
 {
@@ -24,21 +20,56 @@ namespace AOC
 
         static void Main(string[] args)
         {
-            var testData = "D2P1.txt";
-            var testBase = @"h:\git\aoc\testfiles";
-            
+            var start = 138307;
+            //start = 111122;
+            var end = 654504;
+
             var answer = 0;
 
-            using (TextReader tr = new StreamReader(Path.Combine(testBase, testData)))
+            for (int i = start; i < end; i++)
             {
-                var value = tr.ReadLine();
-                var arr = value.Split(',').Select(int.Parse).ToArray();
-                
-                
-                Console.WriteLine($"{answer}");
+                var s = i.ToString();
+                var increase = true;
+                for (int c = 1; c < 6; c++)
+                {
+                    if (s[c] < s[c - 1])
+                    {
+                        increase = false;
+                        break;
+                    }
+                }
+
+                if (!increase)
+                    continue;
+
+                for (int c = 1; c < 6; c++)
+                {
+                    var cont = false;
+                    if (s[c] == s[c - 1])
+                    {
+                        while (c < 5 && s[c] == s[c + 1])
+                        {
+                            c++;
+                            cont = true;
+                        }
+
+
+                        if (cont)
+                            continue;
+
+
+                        answer++;
+                        break;
+
+                    }
+                }
+
             }
 
-            
+            Console.WriteLine($"{answer}");
+
+
+
 
         }
     }
