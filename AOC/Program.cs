@@ -8,24 +8,10 @@ namespace AOC
 {
     class Program
     {
-        public static int Calculate(int mass)
-        {
-            var sum = 0;
-            do
-            {
-                mass = (mass / 3) - 2;
-                sum += mass;
-
-            } while (mass > 6);
-
-            return sum;
-        }
-
-
         static void Main(string[] args)
         {
             var testBase = @"h:\git\aoc\testfiles";
-            var testData = Path.Combine(testBase, "d2p1O.txt");
+            var testData = Path.Combine(testBase, "d5p1.txt");
             var sum = 0;
 
             var items = new List<int>();
@@ -33,60 +19,60 @@ namespace AOC
             {
                 var value = tr.ReadLine();
                 var arr = value.Split(',').Select(int.Parse).ToArray();
+                // takes care of only opcode 3
+                arr[arr[1]] = 1;
 
-                var noun = 0;
-                var verb = 0;
-                
-                for (int i = 0; i < 99; i++)
+
+                //var arrTemp = new int[arr.Length];
+                //Array.Copy(arr, arrTemp,arr.Length);
+
+                var instructionIncrease = 2;
+                for (var k = 2; k < arr.Length; k += instructionIncrease)
                 {
-                    for (int j = 0; j < 99; j++)
+                    var op = arr[k] % 100;
+                    var idx1ByPos = true;
+                    var idx2ByPos = true;
+                    if (arr[k].ToString().Length > 2)
+                        idx1ByPos = (arr[k] / 100) % 10 == 0;
+                    idx2ByPos = (arr[k] / 1000) % 10 == 0;
+
+                    if (op == 99)
+                        break;
+                    var idx1 = arr[k + 1];
+                    var idx2 = arr[k + 2];
+                    var idx3 = arr[k + 3];
+                    var val1 = 0;
+                    var val2 = 0;
+
+                    switch (op)
                     {
-                        var arrTemp = new int[arr.Length];
-                        Array.Copy(arr, arrTemp,arr.Length);
-
-                        arrTemp[1] = i;
-                        arrTemp[2] = j;
-                        for (var k = 0; k < arrTemp.Length; k += 4)
-                        {
-                            var op = arrTemp[k];
-                            if (op == 99)
-                                break;
-                            var idx1 = arrTemp[k + 1];
-                            var idx2 = arrTemp[k + 2];
-                            var idx3 = arrTemp[k + 3];
-
-                            switch (op)
-                            {
-                                case 1:
-                                    arrTemp[idx3] = arrTemp[idx1] + arrTemp[idx2];
-                                    break;
-                                case 2:
-                                    arrTemp[idx3] = arrTemp[idx1] * arrTemp[idx2];
-                                    break;
-                            }
-
-                        }
-
-                        if (arrTemp[0] > 19690720)
+                        case 1:
+                            val1 = idx1ByPos ? arr[idx1] : idx1;
+                            val2 = idx2ByPos ? arr[idx2] : idx2;
+                            arr[idx3] = val1 + val2;
+                            instructionIncrease = 4;
                             break;
-                        if (arrTemp[0] == 19690720)
-                        {
-                            noun = i;
-                            verb = j;
+                        case 2:
+                            val1 = idx1ByPos ? arr[idx1] : idx1;
+                            val2 = idx2ByPos ? arr[idx2] : idx2;
+                            arr[idx3] = val1 * val2;
+                            instructionIncrease = 4;
                             break;
-                        }
+                        case 4:
+                            // take next param and output
+                            if (idx1ByPos)
+                                Console.WriteLine(arr[idx1]);
+                            else
+                                Console.WriteLine(idx1);
 
-                        if (arrTemp[0] == 19690720)
+                            instructionIncrease = 2;
                             break;
+                        case 8:
+                            break;
+
                     }
                 }
-
-                Console.WriteLine($"noun: {noun}, verb: {verb}");
-                Console.WriteLine($"{100 * noun + verb}");
             }
-
-            
-
         }
     }
 }
