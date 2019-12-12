@@ -11,7 +11,7 @@ namespace AOC
         static void Main(string[] args)
         {
             var testBase = @"h:\git\aoc\testfiles";
-            var testData = Path.Combine(testBase, "d7.txt");
+            var testData = Path.Combine(testBase, "testd7.txt");
 
             var origList = new List<int>();
             using (TextReader tr = new StreamReader(testData))
@@ -20,36 +20,44 @@ namespace AOC
                 origList = value.Split(',').Select(int.Parse).ToList();
             }
 
-
             // loop
             // create all combinations of inputs
             int[] numbers = new[]
             {
-                0, 1, 2, 3, 4
+                5,6,7,8,9
             };
             var permutations = new List<string>();
             Permute(numbers, permutations);
 
+
             var maxOutput = 0;
+
             foreach (var item in permutations)
             {
                 var copyArr = new int[origList.Count];
                 origList.CopyTo(copyArr);
 
                 var output = 0;
-                for (int i = 0; i < 5; i++)
+                var eOutput = 0;
+                var finished = false;
+                while (!finished)
                 {
-                    var phase = int.Parse(item.Split(',')[i]);
-                    output = ProcessAmp(copyArr, phase, output);
+                    for (int i = 0; i < 5; i++)
+                    {
+                        var phase = int.Parse(item.Split(',')[i]);
+                        output = ProcessAmp(copyArr, phase, output, ref finished);
+                        if (i == 4) eOutput = output;
+                        if (finished) break;
+                    }
                 }
-                
-                maxOutput = Math.Max(output, maxOutput);
+
+                maxOutput = Math.Max(eOutput, maxOutput);
             }
 
             Console.WriteLine(maxOutput);
 
         }
-        
+
         public static void Permute<T>(T[] items, List<string> output)
         {
             Permute(items, 0, new T[items.Length], new bool[items.Length], output);
@@ -76,7 +84,7 @@ namespace AOC
                 }
             }
         }
-        private static int ProcessAmp(int[] arr, int input1, int input2)
+        private static int ProcessAmp(int[] arr, int input1, int input2, ref bool finished)
         {
             var instructionIncrease = 2;
             var isInput1 = true;
@@ -88,7 +96,10 @@ namespace AOC
                 var idx2ByPos = (arr[k] / 1000) % 10 == 0;
 
                 if (op == 99)
-                    break;
+                {
+                    finished = true;
+                    return input2;
+                }
                 var param1 = arr[k + 1];
                 var param2 = 0;
                 var param3 = 0;
