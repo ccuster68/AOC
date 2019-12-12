@@ -23,8 +23,13 @@ namespace AOC
 
             // loop
             // create all combinations of inputs
-            var charPhase = new char[5] { '0', '1', '2', '3', '4' };
-            var phases = Permute(charPhase);
+            int[] numbers = new[]
+            {
+                0, 1, 2, 3, 4
+            };
+            var permutations = new List<string>();
+            Permute(numbers, permutations);
+
 
             var copyArr = new int[origList.Count];
             origList.CopyTo(copyArr);
@@ -32,25 +37,40 @@ namespace AOC
             // takes care of only opcode 3
             origList[origList[1]] = 5;
 
-            ProcessAmp(copyArr);
+            ProcessAmp(copyArr, 1, 1);
 
         }
-        private static string[] Permute(char[] characters)
+        
+        public static void Permute<T>(T[] items, List<string> output)
         {
-            List<string> strings = new List<string>();
-            for (int i = 0; i < characters.Length; i++)
+            Permute(items, 0, new T[items.Length], new bool[items.Length], output);
+        }
+        private static void Permute<T>(T[] items, int item, T[] permutation, bool[] used, List<string> output)
+        {
+            for (int i = 0; i < items.Length; ++i)
             {
-                for (int j = i + 1; j < characters.Length; j++)
+                if (!used[i])
                 {
-                    strings.Add(new String(new char[] { characters[i], characters[j] }));
+                    used[i] = true;
+                    permutation[item] = items[i];
+
+                    if (item < (items.Length - 1))
+                    {
+                        Permute(items, item + 1, permutation, used, output);
+                    }
+                    else
+                    {
+                        output.Add(string.Join(",", permutation));
+                    }
+
+                    used[i] = false;
                 }
             }
-
-            return strings.ToArray();
         }
-        private static int ProcessAmp(int[] arr)
+        private static int ProcessAmp(int[] arr, int input1, int input2)
         {
             var instructionIncrease = 2;
+            var isInput1 = true;
             for (var k = 0; k < arr.Length; k += instructionIncrease)
             {
                 var op = arr[k] % 100;
@@ -65,7 +85,7 @@ namespace AOC
                 var param3 = 0;
                 var val1 = 0;
                 var val2 = 0;
-                if (op != 4 && op !=3)
+                if (op != 4 && op != 3)
                 {
                     param3 = arr[k + 3];
                     param2 = arr[k + 2];
@@ -84,7 +104,8 @@ namespace AOC
                         instructionIncrease = 4;
                         break;
                     case 3:
-
+                        arr[param1] = isInput1 ? input1 : input2;
+                        isInput1 = false;
                         instructionIncrease = 2;
                         break;
                     case 4:
