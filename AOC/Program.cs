@@ -11,7 +11,7 @@ namespace AOC
         static void Main(string[] args)
         {
             var testBase = @"h:\git\aoc\testfiles";
-            var testData = Path.Combine(testBase, "testd7.txt");
+            var testData = Path.Combine(testBase, "d7.txt");
 
             var origList = new List<int>();
             using (TextReader tr = new StreamReader(testData))
@@ -30,14 +30,23 @@ namespace AOC
             var permutations = new List<string>();
             Permute(numbers, permutations);
 
+            var maxOutput = 0;
+            foreach (var item in permutations)
+            {
+                var copyArr = new int[origList.Count];
+                origList.CopyTo(copyArr);
 
-            var copyArr = new int[origList.Count];
-            origList.CopyTo(copyArr);
+                var output = 0;
+                for (int i = 0; i < 5; i++)
+                {
+                    var phase = int.Parse(item.Split(',')[i]);
+                    output = ProcessAmp(copyArr, phase, output);
+                }
+                
+                maxOutput = Math.Max(output, maxOutput);
+            }
 
-            // takes care of only opcode 3
-            origList[origList[1]] = 5;
-
-            ProcessAmp(copyArr, 1, 1);
+            Console.WriteLine(maxOutput);
 
         }
         
